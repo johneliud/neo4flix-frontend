@@ -49,6 +49,10 @@ export class RegisterComponent {
     { validators: passwordMatchValidator },
   );
 
+  close(): void {
+    this.router.navigate(['/']);
+  }
+
   togglePassword(): void {
     this.showPassword.update((v) => !v);
   }
