@@ -171,12 +171,20 @@
             }
           </div>
 
+          <!-- Server error -->
+          @if (serverError()) {
+            <div class="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+              {{ serverError() }}
+            </div>
+          }
+
           <!-- Submit -->
           <button
             type="submit"
-            class="mt-2 w-full rounded-lg bg-[var(--electric-violet)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity duration-150 hover:opacity-90 active:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--electric-violet)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
+            [disabled]="isLoading()"
+            class="mt-2 w-full rounded-lg bg-[var(--electric-violet)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity duration-150 hover:opacity-90 active:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--electric-violet)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Create account
+            {{ isLoading() ? 'Creating account...' : 'Create account' }}
           </button>
 
         </form>

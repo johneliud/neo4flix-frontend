@@ -7,7 +7,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { finalize } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
 
 function passwordMatchValidator(form: AbstractControl): ValidationErrors | null {
   const pw = form.get('password')?.value;
@@ -27,9 +30,13 @@ const PASSWORD_PATTERN = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 })
 export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly showPassword = signal(false);
   readonly showConfirmPassword = signal(false);
+  readonly isLoading = signal(false);
+  readonly serverError = signal<string | null>(null);
 
   readonly registerForm = this.fb.group(
     {
@@ -83,6 +90,27 @@ export class RegisterComponent {
       this.registerForm.markAllAsTouched();
       return;
     }
-    // TODO: integrate AuthService.register() — checkpoint 3
+
+    this.serverError.set(null);
+    this.isLoading.set(true);
+
+    const { username, email, password } = this.registerForm.getRawValue();
+
+    this.authService
+      .register({ username: username!, email: email!, password: password! })
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: () => this.router.navigate(['/login']),
+        error: (err: HttpErrorResponse) => {
+          this.serverError.set(this.parseError(err));
+        },
+      });
+  }
+
+  private parseError(err: HttpErrorResponse): string {
+    if (err.status === 409) return 'This username or email is already in use.';
+    if (err.status === 400) return err.error?.message ?? 'Invalid data. Please check your inputs.';
+    if (err.status >= 500) return 'Something went wrong. Please try again.';
+    return err.error?.message ?? 'An unexpected error occurred.';
   }
 }
