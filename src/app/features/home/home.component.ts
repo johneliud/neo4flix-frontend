@@ -22,8 +22,8 @@ export class HomeComponent implements OnInit {
   readonly isLoading = signal(true);
   readonly hasError = signal(false);
 
-  readonly pageSize = 20;
-  readonly skeletons = Array.from({ length: 20 });
+  readonly pageSize = 15;
+  readonly skeletons = Array.from({ length: 15 });
 
   ngOnInit(): void {
     this.loadMovies(0);
