@@ -34,6 +34,11 @@ export class TwoFactorComponent implements OnInit {
     }
   }
 
+  close(): void {
+    this.authService.clearMfaToken();
+    this.router.navigate(['/login']);
+  }
+
   showError(): boolean {
     const ctrl = this.mfaForm.get('totpCode');
     return !!ctrl?.invalid && !!(ctrl.dirty || ctrl.touched);
