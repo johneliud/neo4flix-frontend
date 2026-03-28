@@ -35,6 +35,11 @@ export interface MfaRequiredResponse {
 
 export type LoginResponse = AuthResponse | MfaRequiredResponse;
 
+export interface TwoFactorAuthRequest {
+  mfaToken: string;
+  totpCode: string;
+}
+
 const TOKEN_KEY = environment.tokenKey;
 const REFRESH_KEY = environment.refreshTokenKey;
 
@@ -45,6 +50,7 @@ export class AuthService {
   private readonly platformId = inject(PLATFORM_ID);
 
   private readonly _token = signal<string | null>(this.loadToken());
+  private readonly _mfaToken = signal<string | null>(null);
 
   readonly isAuthenticated = computed(() => !!this._token());
 
@@ -75,6 +81,18 @@ export class AuthService {
     return localStorage.getItem(REFRESH_KEY);
   }
 
+  getMfaToken(): string | null {
+    return this._mfaToken();
+  }
+
+  setMfaToken(token: string): void {
+    this._mfaToken.set(token);
+  }
+
+  clearMfaToken(): void {
+    this._mfaToken.set(null);
+  }
+
   clearToken(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem(TOKEN_KEY);
@@ -96,6 +114,16 @@ export class AuthService {
 
   register(body: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>('/api/auth/register', body);
+  }
+
+  verifyMfa(body: TwoFactorAuthRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>('/api/auth/2fa/authenticate', body).pipe(
+      tap((response) => {
+        this.setToken(response.accessToken);
+        this.setRefreshToken(response.refreshToken);
+        this.clearMfaToken();
+      }),
+    );
   }
 
   refreshToken(body: RefreshTokenRequest): Observable<AuthResponse> {
