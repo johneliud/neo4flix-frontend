@@ -54,6 +54,16 @@ export class AuthService {
 
   readonly isAuthenticated = computed(() => !!this._token());
 
+  readonly currentUserId = computed<string | null>(() => {
+    const token = this._token();
+    if (!token) return null;
+    try {
+      return JSON.parse(atob(token.split('.')[1])).sub as string;
+    } catch {
+      return null;
+    }
+  });
+
   private loadToken(): string | null {
     if (!isPlatformBrowser(this.platformId)) return null;
     return localStorage.getItem(TOKEN_KEY);

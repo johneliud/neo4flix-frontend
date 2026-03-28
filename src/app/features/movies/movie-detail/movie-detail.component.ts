@@ -4,11 +4,12 @@ import { finalize } from 'rxjs';
 import { Movie, MovieService } from '../../../core/services/movie.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { LazyImageComponent } from '../../../shared/components/lazy-image/lazy-image.component';
+import { RatingComponent } from '../../../shared/components/rating/rating.component';
 
 @Component({
   selector: 'app-movie-detail',
   standalone: true,
-  imports: [RouterLink, LazyImageComponent],
+  imports: [RouterLink, LazyImageComponent, RatingComponent],
   templateUrl: './movie-detail.component.html',
 })
 export class MovieDetailComponent implements OnInit {
