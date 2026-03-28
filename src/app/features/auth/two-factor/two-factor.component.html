@@ -1,0 +1,102 @@
+<!-- Full-screen backdrop -->
+<div class="fixed inset-0 flex items-center justify-center p-4 sm:p-6">
+  <div class="absolute inset-0 bg-[var(--gray-900)] backdrop-blur-sm"></div>
+
+  <!-- Modal card -->
+  <div
+    class="relative flex w-full max-w-3xl overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Two-factor authentication"
+  >
+
+    <!-- Left panel -->
+    <div class="hidden flex-col justify-between bg-[var(--bright-blue)] p-10 text-white md:flex md:w-[42%]">
+      <span class="text-base font-bold tracking-tight">Neo4flix</span>
+
+      <div>
+        <h2 class="mb-3 text-[2rem] font-bold leading-tight tracking-tight">
+          One more<br />step.
+        </h2>
+        <p class="text-sm leading-relaxed text-white/60">
+          Open your authenticator app and enter the 6-digit code to continue.
+        </p>
+      </div>
+
+      <p class="text-xs text-white/25">&copy; 2026 Neo4flix</p>
+    </div>
+
+    <!-- Right panel -->
+    <div class="flex w-full flex-col justify-center bg-white p-8 md:w-[58%] md:p-12">
+      <div class="mx-auto w-full max-w-sm">
+
+        <div class="mb-8">
+          <h1 class="text-2xl font-bold tracking-tight text-[var(--gray-900)]">
+            Two-factor authentication
+          </h1>
+          <p class="mt-1 text-sm text-[var(--gray-700)]">
+            Enter the 6-digit code from your authenticator app
+          </p>
+        </div>
+
+        <form [formGroup]="mfaForm" (ngSubmit)="onSubmit()" novalidate class="flex flex-col gap-5">
+
+          <!-- TOTP code -->
+          <div class="flex flex-col gap-1.5">
+            <label for="totp-code" class="text-sm font-medium text-[var(--gray-700)]">
+              Verification code
+            </label>
+            <input
+              id="totp-code"
+              type="text"
+              inputmode="numeric"
+              formControlName="totpCode"
+              autocomplete="one-time-code"
+              maxlength="6"
+              placeholder="000000"
+              aria-describedby="totp-error"
+              class="w-full rounded-lg border px-3.5 py-2.5 text-center text-xl font-semibold tracking-[0.5em] text-gray-900 placeholder:text-gray-300 placeholder:tracking-[0.5em] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[var(--bright-blue)] transition-[border-color,box-shadow] duration-150"
+              [ngClass]="{
+                'border-gray-300': !showError(),
+                'border-red-400':   showError()
+              }"
+            />
+            @if (showError()) {
+              <p id="totp-error" class="text-xs text-red-600" role="alert">
+                {{ getError() }}
+              </p>
+            }
+          </div>
+
+          <!-- Server error -->
+          @if (serverError()) {
+            <div class="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+              {{ serverError() }}
+            </div>
+          }
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            [disabled]="isLoading()"
+            class="w-full rounded-lg bg-[var(--bright-blue)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity duration-150 hover:opacity-90 active:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bright-blue)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {{ isLoading() ? 'Verifying...' : 'Verify' }}
+          </button>
+
+        </form>
+
+        <p class="mt-6 text-center text-sm text-[var(--gray-700)]">
+          <a
+            routerLink="/login"
+            class="font-semibold text-[var(--bright-blue)] underline-offset-2 hover:underline focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bright-blue)]"
+          >
+            Back to sign in
+          </a>
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+</div>
