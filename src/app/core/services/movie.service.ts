@@ -27,6 +27,8 @@ export class MovieService {
 
   private readonly pageCache = new Map<string, PagedResponse<Movie>>();
   private readonly detailCache = new Map<string, Movie>();
+  private readonly searchCache = new Map<string, PagedResponse<Movie>>();
+  private genresCache: string[] | null = null;
 
   getMovies(
     page = 0,
@@ -55,5 +57,35 @@ export class MovieService {
     return this.http
       .get<Movie>(`/api/movies/${id}`)
       .pipe(tap((movie) => this.detailCache.set(id, movie)));
+  }
+
+  searchMovies(
+    title: string,
+    genre: string,
+    yearFrom: number | null,
+    yearTo: number | null,
+    page = 0,
+    size = 15,
+  ): Observable<PagedResponse<Movie>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (title) params = params.set('title', title);
+    if (genre) params = params.set('genre', genre);
+    if (yearFrom != null) params = params.set('releaseYearFrom', yearFrom);
+    if (yearTo != null) params = params.set('releaseYearTo', yearTo);
+
+    const key = params.toString();
+    const cached = this.searchCache.get(key);
+    if (cached) return of(cached);
+
+    return this.http
+      .get<PagedResponse<Movie>>('/api/movies/search', { params })
+      .pipe(tap((response) => this.searchCache.set(key, response)));
+  }
+
+  getGenres(): Observable<string[]> {
+    if (this.genresCache) return of(this.genresCache);
+    return this.http
+      .get<string[]>('/api/movies/genres')
+      .pipe(tap((genres) => (this.genresCache = genres)));
   }
 }
