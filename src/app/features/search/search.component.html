@@ -37,8 +37,8 @@
           placeholder="From"
           [ngModel]="yearFrom()"
           (ngModelChange)="yearFrom.set($event || null); onFilterChange()"
-          min="1900"
-          max="2099"
+          [min]="minYear"
+          [max]="maxYear"
           class="h-9 w-24 rounded-lg border border-gray-200 bg-gray-50 px-3 text-sm text-gray-700 placeholder-gray-400 transition-colors duration-150 focus:border-[var(--french-violet)] focus:outline-none dark:border-white/10 dark:bg-white/[0.05] dark:text-gray-300 dark:placeholder-gray-500"
         />
         <span class="text-sm text-gray-400">–</span>
@@ -47,8 +47,8 @@
           placeholder="To"
           [ngModel]="yearTo()"
           (ngModelChange)="yearTo.set($event || null); onFilterChange()"
-          min="1900"
-          max="2099"
+          [min]="minYear"
+          [max]="maxYear"
           class="h-9 w-24 rounded-lg border border-gray-200 bg-gray-50 px-3 text-sm text-gray-700 placeholder-gray-400 transition-colors duration-150 focus:border-[var(--french-violet)] focus:outline-none dark:border-white/10 dark:bg-white/[0.05] dark:text-gray-300 dark:placeholder-gray-500"
         />
       </div>
