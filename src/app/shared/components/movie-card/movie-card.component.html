@@ -3,7 +3,7 @@
   class="group flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition-shadow duration-200 hover:shadow-md dark:border-white/[0.07] dark:bg-white/[0.04] dark:hover:shadow-black/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
 >
   <!-- Poster -->
-  <div class="aspect-[2/3] w-full overflow-hidden bg-gray-100 dark:bg-white/[0.06]">
+  <div class="relative aspect-[2/3] w-full overflow-hidden bg-gray-100 dark:bg-white/[0.06]">
     @if (movie().posterUrl) {
       <app-lazy-image [src]="movie().posterUrl!" [alt]="movie().title" />
     } @else {
@@ -13,6 +13,27 @@
         </span>
       </div>
     }
+
+    <!-- Watchlist button -->
+    <button
+      type="button"
+      (click)="onToggleWatchlist($event)"
+      [disabled]="isWatchlistLoading()"
+      [attr.aria-label]="inWatchlist() ? 'Remove from watchlist' : 'Save to watchlist'"
+      class="absolute right-2 top-2 rounded-md bg-black/50 p-1.5 text-white backdrop-blur-sm transition-colors duration-150 hover:bg-black/70 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+    >
+      @if (inWatchlist()) {
+        <!-- Filled bookmark -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 fill-[var(--bright-blue)]" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 3a2 2 0 0 0-2 2v16l9-4 9 4V5a2 2 0 0 0-2-2H5z" />
+        </svg>
+      } @else {
+        <!-- Outline bookmark -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 3a2 2 0 0 0-2 2v16l9-4 9 4V5a2 2 0 0 0-2-2H5z" />
+        </svg>
+      }
+    </button>
   </div>
 
   <!-- Info -->
