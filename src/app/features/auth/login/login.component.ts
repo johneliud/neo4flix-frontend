@@ -28,6 +28,10 @@ export class LoginComponent {
     password: ['', [Validators.required]],
   });
 
+  close(): void {
+    this.router.navigate(['/']);
+  }
+
   togglePassword(): void {
     this.showPassword.update((v) => !v);
   }
