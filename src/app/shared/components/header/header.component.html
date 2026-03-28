@@ -38,6 +38,22 @@
       </a>
     </nav>
 
+    <!-- Desktop search (lg+) -->
+    <form class="hidden lg:flex" (ngSubmit)="submitSearch()">
+      <div class="relative">
+        <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+        </svg>
+        <input
+          type="search"
+          placeholder="Search movies…"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+          class="h-9 w-56 rounded-lg border border-gray-200 bg-gray-50 pl-9 pr-3 text-sm text-gray-900 placeholder-gray-400 transition-colors duration-150 focus:w-72 focus:border-[var(--french-violet)] focus:bg-white focus:outline-none dark:border-white/10 dark:bg-white/[0.05] dark:text-white dark:placeholder-gray-500 dark:focus:bg-white/[0.08]"
+        />
+      </div>
+    </form>
+
     <!-- Desktop right controls (lg+) -->
     <div class="hidden items-center gap-2 lg:flex">
       <!-- Theme toggle -->
@@ -84,6 +100,18 @@
 
     <!-- Mobile / tablet controls (< lg) -->
     <div class="flex items-center gap-1 lg:hidden">
+      <!-- Search icon -->
+      <button
+        type="button"
+        (click)="submitSearch()"
+        aria-label="Search"
+        class="rounded-md p-2 text-gray-500 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+        </svg>
+      </button>
+
       <!-- Theme toggle -->
       <button
         type="button"
