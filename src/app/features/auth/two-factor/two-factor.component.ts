@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 const TOTP_PATTERN = /^\d{6}$/;
 
@@ -19,9 +20,9 @@ export class TwoFactorComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly notifications = inject(NotificationService);
 
   readonly isLoading = signal(false);
-  readonly serverError = signal<string | null>(null);
 
   readonly mfaForm = this.fb.group({
     totpCode: ['', [Validators.required, Validators.pattern(TOTP_PATTERN)]],
@@ -31,6 +32,11 @@ export class TwoFactorComponent implements OnInit {
     if (!this.authService.getMfaToken()) {
       this.router.navigate(['/login']);
     }
+  }
+
+  close(): void {
+    this.authService.clearMfaToken();
+    this.router.navigate(['/login']);
   }
 
   showError(): boolean {
@@ -58,7 +64,6 @@ export class TwoFactorComponent implements OnInit {
       return;
     }
 
-    this.serverError.set(null);
     this.isLoading.set(true);
 
     this.authService
@@ -67,7 +72,7 @@ export class TwoFactorComponent implements OnInit {
       .subscribe({
         next: () => this.router.navigate(['/']),
         error: (err: HttpErrorResponse) => {
-          this.serverError.set(this.parseError(err));
+          this.notifications.error(this.parseError(err));
         },
       });
   }

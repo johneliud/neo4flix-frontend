@@ -11,6 +11,7 @@ import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 function passwordMatchValidator(form: AbstractControl): ValidationErrors | null {
   const pw = form.get('password')?.value;
@@ -32,11 +33,11 @@ export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly notifications = inject(NotificationService);
 
   readonly showPassword = signal(false);
   readonly showConfirmPassword = signal(false);
   readonly isLoading = signal(false);
-  readonly serverError = signal<string | null>(null);
 
   readonly registerForm = this.fb.group(
     {
@@ -47,6 +48,10 @@ export class RegisterComponent {
     },
     { validators: passwordMatchValidator },
   );
+
+  close(): void {
+    this.router.navigate(['/']);
+  }
 
   togglePassword(): void {
     this.showPassword.update((v) => !v);
@@ -91,7 +96,6 @@ export class RegisterComponent {
       return;
     }
 
-    this.serverError.set(null);
     this.isLoading.set(true);
 
     const { username, email, password } = this.registerForm.getRawValue();
@@ -100,9 +104,12 @@ export class RegisterComponent {
       .register({ username: username!, email: email!, password: password! })
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: () => this.router.navigate(['/login']),
+        next: () => {
+          this.notifications.success('Account created! You can now sign in.');
+          this.router.navigate(['/login']);
+        },
         error: (err: HttpErrorResponse) => {
-          this.serverError.set(this.parseError(err));
+          this.notifications.error(this.parseError(err));
         },
       });
   }

@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -17,15 +18,19 @@ export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly notifications = inject(NotificationService);
 
   readonly showPassword = signal(false);
   readonly isLoading = signal(false);
-  readonly serverError = signal<string | null>(null);
 
   readonly loginForm = this.fb.group({
     username: ['', [Validators.required]],
     password: ['', [Validators.required]],
   });
+
+  close(): void {
+    this.router.navigate(['/']);
+  }
 
   togglePassword(): void {
     this.showPassword.update((v) => !v);
@@ -49,7 +54,6 @@ export class LoginComponent {
       return;
     }
 
-    this.serverError.set(null);
     this.isLoading.set(true);
 
     const { username, password } = this.loginForm.getRawValue();
@@ -67,7 +71,7 @@ export class LoginComponent {
           }
         },
         error: (err: HttpErrorResponse) => {
-          this.serverError.set(this.parseError(err));
+          this.notifications.error(this.parseError(err));
         },
       });
   }

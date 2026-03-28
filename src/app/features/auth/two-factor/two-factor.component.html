@@ -1,6 +1,6 @@
 <!-- Full-screen backdrop -->
-<div class="fixed inset-0 flex items-center justify-center p-4 sm:p-6">
-  <div class="absolute inset-0 bg-[var(--gray-900)] backdrop-blur-sm"></div>
+<div class="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-md"></div>
 
   <!-- Modal card -->
   <div
@@ -9,6 +9,18 @@
     aria-modal="true"
     aria-label="Two-factor authentication"
   >
+
+    <!-- Close -->
+    <button
+      type="button"
+      (click)="close()"
+      aria-label="Close"
+      class="absolute right-3 top-3 z-10 rounded-md p-1.5 text-gray-400 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bright-blue)]"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
 
     <!-- Left panel -->
     <div class="hidden flex-col justify-between bg-[var(--bright-blue)] p-10 text-white md:flex md:w-[42%]">
@@ -68,17 +80,10 @@
             }
           </div>
 
-          <!-- Server error -->
-          @if (serverError()) {
-            <div class="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
-              {{ serverError() }}
-            </div>
-          }
-
           <!-- Submit -->
           <button
             type="submit"
-            [disabled]="isLoading()"
+            [disabled]="isLoading() || mfaForm.invalid"
             class="w-full rounded-lg bg-[var(--bright-blue)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity duration-150 hover:opacity-90 active:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bright-blue)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {{ isLoading() ? 'Verifying...' : 'Verify' }}

@@ -1,0 +1,193 @@
+<header
+  class="fixed inset-x-0 top-0 z-50 h-[3.75rem] border-b border-gray-200 bg-white dark:border-white/[0.07] dark:bg-[var(--gray-900)]"
+>
+  <div class="mx-auto flex h-full max-w-screen-2xl items-center justify-between px-4 sm:px-6 lg:px-8">
+
+    <!-- Logo -->
+    <a
+      routerLink="/"
+      (click)="closeMenu()"
+      class="flex items-center gap-1 text-lg font-bold tracking-tight text-gray-900 dark:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)] rounded"
+    >
+      Neo<span class="text-[var(--french-violet)]">4</span>flix
+    </a>
+
+    <!-- Desktop nav (lg+) -->
+    <nav class="hidden items-center gap-1 lg:flex">
+      <a
+        routerLink="/"
+        routerLinkActive="text-[var(--french-violet)] dark:text-[var(--bright-blue)]"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="rounded-md px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+      >
+        Home
+      </a>
+      <a
+        routerLink="/recommendations"
+        routerLinkActive="text-[var(--french-violet)] dark:text-[var(--bright-blue)]"
+        class="rounded-md px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+      >
+        Recommendations
+      </a>
+      <a
+        routerLink="/watchlist"
+        routerLinkActive="text-[var(--french-violet)] dark:text-[var(--bright-blue)]"
+        class="rounded-md px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+      >
+        Watchlist
+      </a>
+    </nav>
+
+    <!-- Desktop right controls (lg+) -->
+    <div class="hidden items-center gap-2 lg:flex">
+      <!-- Theme toggle -->
+      <button
+        type="button"
+        (click)="themeService.toggle()"
+        [attr.aria-label]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+        class="rounded-md p-2 text-gray-500 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+      >
+        @if (themeService.isDark()) {
+          <!-- Sun: switch to light -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        } @else {
+          <!-- Moon: switch to dark -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        }
+      </button>
+
+      <!-- Divider -->
+      <div class="h-5 w-px bg-gray-200 dark:bg-white/10"></div>
+
+      <!-- Auth action -->
+      @if (authService.isAuthenticated()) {
+        <button
+          type="button"
+          (click)="authService.logout()"
+          class="rounded-md px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+        >
+          Sign out
+        </button>
+      } @else {
+        <a
+          routerLink="/login"
+          class="rounded-md bg-[var(--french-violet)] px-3.5 py-1.5 text-sm font-semibold text-white transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)] focus-visible:ring-offset-2"
+        >
+          Sign in
+        </a>
+      }
+    </div>
+
+    <!-- Mobile / tablet controls (< lg) -->
+    <div class="flex items-center gap-1 lg:hidden">
+      <!-- Theme toggle -->
+      <button
+        type="button"
+        (click)="themeService.toggle()"
+        [attr.aria-label]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+        class="rounded-md p-2 text-gray-500 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+      >
+        @if (themeService.isDark()) {
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        }
+      </button>
+
+      <!-- Hamburger / close -->
+      <button
+        type="button"
+        (click)="toggleMenu()"
+        [attr.aria-label]="isMenuOpen() ? 'Close menu' : 'Open menu'"
+        [attr.aria-expanded]="isMenuOpen()"
+        class="rounded-md p-2 text-gray-500 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+      >
+        @if (isMenuOpen()) {
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        }
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Mobile dropdown (< lg) -->
+  @if (isMenuOpen()) {
+    <!-- Invisible backdrop: closes menu on outside click -->
+    <div
+      class="fixed inset-0 top-[3.75rem] z-40"
+      (click)="closeMenu()"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Dropdown panel: 75vw, right-aligned -->
+    <div
+      class="absolute right-0 top-[3.75rem] z-50 w-[75vw] border-b border-l border-gray-200 bg-white shadow-xl dark:border-white/[0.07] dark:bg-[var(--gray-900)]"
+      role="navigation"
+      aria-label="Mobile navigation"
+    >
+      <div class="flex flex-col py-2">
+
+        <a
+          routerLink="/"
+          routerLinkActive="bg-gray-50 text-[var(--french-violet)] dark:bg-white/5 dark:text-[var(--bright-blue)]"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeMenu()"
+          class="px-6 py-3 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white"
+        >
+          Home
+        </a>
+        <a
+          routerLink="/recommendations"
+          routerLinkActive="bg-gray-50 text-[var(--french-violet)] dark:bg-white/5 dark:text-[var(--bright-blue)]"
+          (click)="closeMenu()"
+          class="px-6 py-3 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white"
+        >
+          Recommendations
+        </a>
+        <a
+          routerLink="/watchlist"
+          routerLinkActive="bg-gray-50 text-[var(--french-violet)] dark:bg-white/5 dark:text-[var(--bright-blue)]"
+          (click)="closeMenu()"
+          class="px-6 py-3 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white"
+        >
+          Watchlist
+        </a>
+
+        <div class="my-2 border-t border-gray-100 dark:border-white/[0.07]"></div>
+
+        @if (authService.isAuthenticated()) {
+          <button
+            type="button"
+            (click)="authService.logout(); closeMenu()"
+            class="px-6 py-3 text-left text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white"
+          >
+            Sign out
+          </button>
+        } @else {
+          <a
+            routerLink="/login"
+            (click)="closeMenu()"
+            class="px-6 py-3 text-sm font-semibold text-[var(--french-violet)] transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-white/5"
+          >
+            Sign in
+          </a>
+        }
+
+      </div>
+    </div>
+  }
+</header>

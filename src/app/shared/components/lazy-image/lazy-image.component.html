@@ -1,0 +1,25 @@
+<!-- Low-res blurred placeholder — visible while full image loads -->
+<img
+  [src]="thumbnailSrc()"
+  [alt]="alt()"
+  class="absolute inset-0 h-full w-full object-cover scale-110 blur-sm transition-opacity duration-500"
+  [class.opacity-0]="fullLoaded()"
+  aria-hidden="true"
+/>
+
+<!-- Pulse shimmer overlay — sits on top of thumbnail while full image loads -->
+<div
+  class="absolute inset-0 animate-pulse bg-black/5 transition-opacity duration-500 dark:bg-white/[0.05]"
+  [class.opacity-0]="fullLoaded()"
+  aria-hidden="true"
+></div>
+
+<!-- Full-res image — fades in once loaded -->
+<img
+  [src]="src()"
+  [alt]="alt()"
+  class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+  [class.opacity-0]="!fullLoaded()"
+  loading="lazy"
+  (load)="onFullLoad()"
+/>
