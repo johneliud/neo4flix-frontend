@@ -10,7 +10,7 @@ export const serverRoutes: ServerRoute[] = [
 
   // Public pages: SSR per-request
   { path: '', renderMode: RenderMode.Server },
-  { path: 'search', renderMode: RenderMode.Server },
+  { path: 'search', renderMode: RenderMode.Client },
 
   // Auth modals: prerender (static forms, no server data needed)
   { path: 'login', renderMode: RenderMode.Prerender },
