@@ -1,0 +1,49 @@
+<!-- Page header -->
+<div class="sticky top-[3.75rem] z-40 border-b border-gray-200 bg-white dark:border-white/[0.07] dark:bg-[var(--gray-900)]">
+  <div class="mx-auto max-w-screen-2xl px-4 py-4 sm:px-6 lg:px-8">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">My Watchlist</h1>
+    @if (!isLoading() && movies().length > 0) {
+      <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+        {{ movies().length }} {{ movies().length === 1 ? 'movie' : 'movies' }} saved
+      </p>
+    }
+  </div>
+</div>
+
+<!-- Content -->
+<div class="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
+
+  <!-- Loading skeleton -->
+  @if (isLoading()) {
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      @for (item of skeletons; track $index) {
+        <div class="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-white/[0.07] dark:bg-white/[0.04]">
+          <div class="aspect-[2/3] w-full animate-pulse bg-gray-200 dark:bg-white/[0.08]"></div>
+          <div class="flex flex-col gap-2 p-3">
+            <div class="h-3.5 w-3/4 animate-pulse rounded bg-gray-200 dark:bg-white/[0.08]"></div>
+            <div class="h-3 w-1/2 animate-pulse rounded bg-gray-200 dark:bg-white/[0.08]"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Movie grid -->
+  @if (!isLoading()) {
+    @if (movies().length === 0) {
+      <div class="py-24 text-center">
+        <p class="text-lg font-medium text-gray-500 dark:text-gray-400">Your watchlist is empty.</p>
+        <p class="mt-1 text-sm text-gray-400 dark:text-gray-500">
+          Browse movies and save what you want to watch.
+        </p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        @for (movie of movies(); track movie.id) {
+          <app-movie-card [movie]="movie" />
+        }
+      </div>
+    }
+  }
+
+</div>
