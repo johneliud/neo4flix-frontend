@@ -3,27 +3,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
-  // Auth pages (no layout shell, guest-only)
-  {
-    path: 'login',
-    loadComponent: () =>
-      import('./features/auth/login/login.component').then((m) => m.LoginComponent),
-    canActivate: [guestGuard],
-  },
-  {
-    path: 'register',
-    loadComponent: () =>
-      import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
-    canActivate: [guestGuard],
-  },
-  {
-    path: '2fa',
-    loadComponent: () =>
-      import('./features/auth/two-factor/two-factor.component').then((m) => m.TwoFactorComponent),
-    canActivate: [guestGuard],
-  },
-
-  // Main layout (header + content)
+  // Main layout (header + content).
   {
     path: '',
     loadComponent: () =>
@@ -39,6 +19,27 @@ export const routes: Routes = [
         path: 'search',
         loadComponent: () =>
           import('./features/search/search.component').then((m) => m.SearchComponent),
+      },
+      // Auth modals (guest-only, render as fixed overlays)
+      {
+        path: 'login',
+        loadComponent: () =>
+          import('./features/auth/login/login.component').then((m) => m.LoginComponent),
+        canActivate: [guestGuard],
+      },
+      {
+        path: 'register',
+        loadComponent: () =>
+          import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
+        canActivate: [guestGuard],
+      },
+      {
+        path: '2fa',
+        loadComponent: () =>
+          import('./features/auth/two-factor/two-factor.component').then(
+            (m) => m.TwoFactorComponent,
+          ),
+        canActivate: [guestGuard],
       },
       // Protected
       {

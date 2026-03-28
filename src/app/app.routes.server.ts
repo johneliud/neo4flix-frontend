@@ -12,6 +12,11 @@ export const serverRoutes: ServerRoute[] = [
   { path: '', renderMode: RenderMode.Server },
   { path: 'search', renderMode: RenderMode.Server },
 
-  // Guest pages + 404: prerender at build time
+  // Auth modals: prerender (static forms, no server data needed)
+  { path: 'login', renderMode: RenderMode.Prerender },
+  { path: 'register', renderMode: RenderMode.Prerender },
+  { path: '2fa', renderMode: RenderMode.Prerender },
+
+  // 404: prerender at build time
   { path: '**', renderMode: RenderMode.Prerender },
 ];
