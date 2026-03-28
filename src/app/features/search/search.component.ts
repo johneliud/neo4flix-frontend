@@ -32,6 +32,8 @@ export class SearchComponent implements OnInit {
   readonly isLoading = signal(false);
   readonly hasSearched = signal(false);
 
+  readonly minYear = 1990;
+  readonly maxYear = new Date().getFullYear() + 10;
   readonly pageSize = 15;
   readonly skeletons = Array.from({ length: 15 });
 

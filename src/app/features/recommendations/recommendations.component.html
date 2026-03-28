@@ -1,22 +1,12 @@
-<!-- Sticky filter bar -->
+<!-- Filter bar -->
 <div class="sticky top-[3.75rem] z-40 border-b border-gray-200 bg-white dark:border-white/[0.07] dark:bg-[var(--gray-900)]">
   <div class="mx-auto max-w-screen-2xl px-4 py-3 sm:px-6 lg:px-8">
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
 
-      <!-- Title search -->
-      <div class="relative flex-1">
-        <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
-        </svg>
-        <input
-          type="search"
-          placeholder="Search by title…"
-          [ngModel]="title()"
-          (ngModelChange)="onTitleChange($event)"
-          class="h-9 w-full rounded-lg border border-gray-200 bg-gray-50 pl-9 pr-3 text-sm text-gray-900 placeholder-gray-400 transition-colors duration-150 focus:border-[var(--french-violet)] focus:bg-white focus:outline-none dark:border-white/10 dark:bg-white/[0.05] dark:text-white dark:placeholder-gray-500 dark:focus:bg-white/[0.08]"
-        />
-      </div>
+      <h1 class="shrink-0 text-sm font-semibold text-gray-900 dark:text-white sm:text-base">
+        Recommended for you
+      </h1>
 
       <!-- Genre select -->
       <select
@@ -54,7 +44,7 @@
       </div>
 
       <!-- Clear -->
-      @if (hasSearched()) {
+      @if (genre() || yearFrom() || yearTo()) {
         <button
           type="button"
           (click)="clearFilters()"
@@ -67,7 +57,7 @@
     </div>
 
     <!-- Result count -->
-    @if (!isLoading() && hasSearched() && totalElements() > 0) {
+    @if (!isLoading() && hasLoaded() && totalElements() > 0) {
       <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ pageRangeLabel() }}</p>
     }
 
@@ -93,20 +83,18 @@
   }
 
   <!-- Results -->
-  @if (!isLoading()) {
-    @if (!hasSearched()) {
+  @if (!isLoading() && hasLoaded()) {
+    @if (movies().length === 0) {
       <div class="py-24 text-center">
-        <p class="text-lg font-medium text-gray-500 dark:text-gray-400">Search for movies by title, genre, or year.</p>
-      </div>
-    } @else if (movies().length === 0) {
-      <div class="py-24 text-center">
-        <p class="text-lg font-medium text-gray-500 dark:text-gray-400">No movies found.</p>
-        <p class="mt-1 text-sm text-gray-400 dark:text-gray-500">Try adjusting your filters.</p>
+        <p class="text-lg font-medium text-gray-500 dark:text-gray-400">No recommendations yet.</p>
+        <p class="mt-1 text-sm text-gray-400 dark:text-gray-500">
+          Rate some movies and we'll suggest what to watch next.
+        </p>
       </div>
     } @else {
       <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         @for (movie of movies(); track movie.id) {
-          <app-movie-card [movie]="movie" />
+          <app-movie-card [movie]="$any(movie)" />
         }
       </div>
 

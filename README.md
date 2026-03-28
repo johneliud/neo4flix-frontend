@@ -1,59 +1,71 @@
-# Neo4flixFrontend
+# Neo4flix Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.0.
+Angular 21 frontend for the Neo4flix movie recommendation platform. Communicates with a Spring Boot microservices backend through an API gateway.
 
-## Development server
+## Prerequisites
 
-To start a local development server, run:
+- Node.js 20+
+- npm 10+
+- Angular CLI 21: `npm install -g @angular/cli`
+- The backend services running (see backend README)
+
+## Clone & Install
+
+```bash
+git clone https://github.com/johneliud/neo4flix-frontend
+cd neo4flix-frontend
+npm install
+```
+
+## Development Server
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Opens at `http://localhost:4200`. The app proxies all `/api/*` requests to the API gateway at `http://localhost:8081`.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+## Build
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Output goes to `dist/neo4flix-frontend`. The production build uses relative URLs — the reverse proxy handles routing to backend services.
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Running Tests
 
 ```bash
+# Unit tests
 ng test
-```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
+# End-to-end tests
 ng e2e
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Environment
 
-## Additional Resources
+The app uses `src/environments/` to configure the API base URL:
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+| File | `apiUrl` | Used for |
+|------|----------|----------|
+| `environment.ts` | `http://localhost:8081` | Local development |
+| `environment.production.ts` | `''` (relative) | Production build |
+
+No `.env` file is needed for the frontend. All secrets are on the backend.
+
+## Backend
+
+The full backend stack (API gateway + microservices + Neo4j + PostgreSQL) is started with:
+
+```bash
+cd ../          # repo root
+./start-services.sh
+```
+
+This opens individual terminal windows for Docker Compose and each Spring Boot service.
+
+## Documentation
+
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — project structure, services, routing, components, design system
+- [`guide/ISSUES.md`](guide/ISSUES.md) — milestone progress tracker
