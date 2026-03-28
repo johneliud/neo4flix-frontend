@@ -1,0 +1,141 @@
+<!-- Full-screen backdrop -->
+<div class="fixed inset-0 flex items-center justify-center p-4 sm:p-6">
+  <div class="absolute inset-0 bg-[var(--gray-900)] backdrop-blur-sm"></div>
+
+  <!-- Modal card -->
+  <div
+    class="relative flex w-full max-w-3xl overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Sign in"
+  >
+
+    <!-- Left panel -->
+    <div class="hidden flex-col justify-between bg-[var(--french-violet)] p-10 text-white md:flex md:w-[42%]">
+      <span class="text-base font-bold tracking-tight">Neo4flix</span>
+
+      <div>
+        <h2 class="mb-3 text-[2rem] font-bold leading-tight tracking-tight">
+          Welcome<br />back.
+        </h2>
+        <p class="text-sm leading-relaxed text-white/60">
+          Sign in to discover films curated around your taste.
+        </p>
+      </div>
+
+      <p class="text-xs text-white/25">&copy; 2026 Neo4flix</p>
+    </div>
+
+    <!-- Right panel -->
+    <div class="flex w-full flex-col justify-center bg-white p-8 md:w-[58%] md:p-12">
+      <div class="mx-auto w-full max-w-sm">
+
+        <div class="mb-8">
+          <h1 class="text-2xl font-bold tracking-tight text-[var(--gray-900)]">Sign in</h1>
+          <p class="mt-1 text-sm text-[var(--gray-700)]">Enter your credentials to continue</p>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate class="flex flex-col gap-5">
+
+          <!-- Username -->
+          <div class="flex flex-col gap-1.5">
+            <label for="username" class="text-sm font-medium text-[var(--gray-700)]">
+              Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              formControlName="username"
+              autocomplete="username"
+              placeholder="your_username"
+              aria-describedby="username-error"
+              class="w-full rounded-lg border px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[var(--french-violet)] transition-[border-color,box-shadow] duration-150"
+              [ngClass]="{
+                'border-gray-300': !showError('username'),
+                'border-red-400':   showError('username')
+              }"
+            />
+            @if (showError('username')) {
+              <p id="username-error" class="text-xs text-red-600" role="alert">
+                {{ getError('username') }}
+              </p>
+            }
+          </div>
+
+          <!-- Password -->
+          <div class="flex flex-col gap-1.5">
+            <label for="password" class="text-sm font-medium text-[var(--gray-700)]">
+              Password
+            </label>
+            <div class="relative">
+              <input
+                id="password"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                autocomplete="current-password"
+                placeholder="••••••••"
+                aria-describedby="password-error"
+                class="w-full rounded-lg border px-3.5 py-2.5 pr-10 text-sm text-gray-900 placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[var(--french-violet)] transition-[border-color,box-shadow] duration-150"
+                [ngClass]="{
+                  'border-gray-300': !showError('password'),
+                  'border-red-400':   showError('password')
+                }"
+              />
+              <button
+                type="button"
+                (click)="togglePassword()"
+                [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-150 hover:text-gray-600 focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+              >
+                @if (showPassword()) {
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                  </svg>
+                } @else {
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                }
+              </button>
+            </div>
+            @if (showError('password')) {
+              <p id="password-error" class="text-xs text-red-600" role="alert">
+                {{ getError('password') }}
+              </p>
+            }
+          </div>
+
+          <!-- Server error -->
+          @if (serverError()) {
+            <div class="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+              {{ serverError() }}
+            </div>
+          }
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            [disabled]="isLoading()"
+            class="mt-1 w-full rounded-lg bg-[var(--french-violet)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity duration-150 hover:opacity-90 active:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {{ isLoading() ? 'Signing in...' : 'Sign in' }}
+          </button>
+
+        </form>
+
+        <p class="mt-6 text-center text-sm text-[var(--gray-700)]">
+          Don't have an account?
+          <a
+            routerLink="/register"
+            class="font-semibold text-[var(--french-violet)] underline-offset-2 hover:underline focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+          >
+            Create one
+          </a>
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+</div>
