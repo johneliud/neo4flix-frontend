@@ -7,6 +7,7 @@ export const serverRoutes: ServerRoute[] = [
   // Authenticated pages: client-side only (require auth context unavailable at SSR)
   { path: 'recommendations', renderMode: RenderMode.Client },
   { path: 'watchlist', renderMode: RenderMode.Client },
+  { path: 'settings', renderMode: RenderMode.Client },
 
   // Public pages: SSR per-request
   { path: '', renderMode: RenderMode.Server },

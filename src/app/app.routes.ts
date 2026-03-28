@@ -64,6 +64,12 @@ export const routes: Routes = [
           import('./features/watchlist/watchlist.component').then((m) => m.WatchlistComponent),
         canActivate: [authGuard],
       },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/settings/settings.component').then((m) => m.SettingsComponent),
+        canActivate: [authGuard],
+      },
     ],
   },
 
