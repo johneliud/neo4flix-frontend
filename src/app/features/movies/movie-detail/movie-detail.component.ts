@@ -3,11 +3,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { Movie, MovieService } from '../../../core/services/movie.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { LazyImageComponent } from '../../../shared/components/lazy-image/lazy-image.component';
 
 @Component({
   selector: 'app-movie-detail',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, LazyImageComponent],
   templateUrl: './movie-detail.component.html',
 })
 export class MovieDetailComponent implements OnInit {
