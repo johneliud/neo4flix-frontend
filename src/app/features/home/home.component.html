@@ -1,0 +1,65 @@
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+
+  <!-- Page header -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Movies</h1>
+    @if (!isLoading() && totalElements() > 0) {
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        {{ totalElements() }} titles
+      </p>
+    }
+  </div>
+
+  <!-- Loading skeleton -->
+  @if (isLoading()) {
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      @for (item of skeletons; track $index) {
+        <div class="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-white/[0.07] dark:bg-white/[0.04]">
+          <div class="aspect-[2/3] w-full animate-pulse bg-gray-200 dark:bg-white/[0.08]"></div>
+          <div class="flex flex-col gap-2 p-3">
+            <div class="h-3.5 w-3/4 animate-pulse rounded bg-gray-200 dark:bg-white/[0.08]"></div>
+            <div class="h-3 w-1/2 animate-pulse rounded bg-gray-200 dark:bg-white/[0.08]"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Movie grid -->
+  @if (!isLoading()) {
+    @if (hasError()) {
+      <div class="py-24 text-center">
+        <p class="mb-4 text-lg font-medium text-gray-500 dark:text-gray-400">Could not load movies.</p>
+        <button
+          type="button"
+          (click)="loadMovies(currentPage())"
+          class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors duration-150 hover:bg-gray-100 dark:border-white/10 dark:text-gray-300 dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+        >
+          Try again
+        </button>
+      </div>
+    } @else if (movies().length === 0) {
+      <div class="py-24 text-center">
+        <p class="text-lg font-medium text-gray-500 dark:text-gray-400">No movies found.</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        @for (movie of movies(); track movie.id) {
+          <app-movie-card [movie]="movie" />
+        }
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+        <div class="mt-8">
+          <app-pagination
+            [currentPage]="currentPage()"
+            [totalPages]="totalPages()"
+            (pageChange)="onPageChange($event)"
+          />
+        </div>
+      }
+    }
+  }
+
+</div>
