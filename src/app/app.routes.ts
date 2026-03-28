@@ -3,11 +3,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
-  {
-    path: '',
-    loadComponent: () => import('./features/home/home.component').then((m) => m.HomeComponent),
-    canActivate: [authGuard],
-  },
+  // Auth pages (no layout shell, guest-only)
   {
     path: 'login',
     loadComponent: () =>
@@ -26,34 +22,51 @@ export const routes: Routes = [
       import('./features/auth/two-factor/two-factor.component').then((m) => m.TwoFactorComponent),
     canActivate: [guestGuard],
   },
+
+  // Main layout (header + content)
   {
-    path: 'movies/:id',
+    path: '',
     loadComponent: () =>
-      import('./features/movies/movie-detail/movie-detail.component').then(
-        (m) => m.MovieDetailComponent,
-      ),
-    canActivate: [authGuard],
+      import('./layouts/main-layout/main-layout.component').then((m) => m.MainLayoutComponent),
+    children: [
+      // Public
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/home/home.component').then((m) => m.HomeComponent),
+      },
+      {
+        path: 'search',
+        loadComponent: () =>
+          import('./features/search/search.component').then((m) => m.SearchComponent),
+      },
+      // Protected
+      {
+        path: 'movies/:id',
+        loadComponent: () =>
+          import('./features/movies/movie-detail/movie-detail.component').then(
+            (m) => m.MovieDetailComponent,
+          ),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'recommendations',
+        loadComponent: () =>
+          import('./features/recommendations/recommendations.component').then(
+            (m) => m.RecommendationsComponent,
+          ),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'watchlist',
+        loadComponent: () =>
+          import('./features/watchlist/watchlist.component').then((m) => m.WatchlistComponent),
+        canActivate: [authGuard],
+      },
+    ],
   },
-  {
-    path: 'search',
-    loadComponent: () =>
-      import('./features/search/search.component').then((m) => m.SearchComponent),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'recommendations',
-    loadComponent: () =>
-      import('./features/recommendations/recommendations.component').then(
-        (m) => m.RecommendationsComponent,
-      ),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'watchlist',
-    loadComponent: () =>
-      import('./features/watchlist/watchlist.component').then((m) => m.WatchlistComponent),
-    canActivate: [authGuard],
-  },
+
+  // 404
   {
     path: '**',
     loadComponent: () =>
