@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { Movie, MovieService } from '../../core/services/movie.service';
 import { NotificationService } from '../../core/services/notification.service';
@@ -24,6 +24,12 @@ export class HomeComponent implements OnInit {
 
   readonly pageSize = 15;
   readonly skeletons = Array.from({ length: 15 });
+
+  readonly pageRangeLabel = computed(() => {
+    const start = this.currentPage() * this.pageSize + 1;
+    const end = Math.min((this.currentPage() + 1) * this.pageSize, this.totalElements());
+    return `Showing ${start}–${end} of ${this.totalElements()}`;
+  });
 
   ngOnInit(): void {
     this.loadMovies(0);

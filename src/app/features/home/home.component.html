@@ -1,14 +1,17 @@
-<div class="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
-
-  <!-- Page header -->
-  <div class="mb-6">
+<!-- Sticky page header -->
+<div class="sticky top-[3.75rem] z-40 border-b border-gray-200 bg-white dark:border-white/[0.07] dark:bg-[var(--gray-900)]">
+  <div class="mx-auto max-w-screen-2xl px-4 py-4 sm:px-6 lg:px-8">
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Movies</h1>
     @if (!isLoading() && totalElements() > 0) {
-      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-        {{ totalElements() }} titles
+      <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+        {{ pageRangeLabel() }}
       </p>
     }
   </div>
+</div>
+
+<!-- Content -->
+<div class="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
 
   <!-- Loading skeleton -->
   @if (isLoading()) {
