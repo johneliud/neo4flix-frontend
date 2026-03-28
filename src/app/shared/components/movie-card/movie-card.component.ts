@@ -1,11 +1,12 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Movie } from '../../../core/services/movie.service';
+import { LazyImageComponent } from '../lazy-image/lazy-image.component';
 
 @Component({
   selector: 'app-movie-card',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, LazyImageComponent],
   templateUrl: './movie-card.component.html',
 })
 export class MovieCardComponent {
