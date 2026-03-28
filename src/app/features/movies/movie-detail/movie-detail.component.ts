@@ -26,24 +26,29 @@ export class MovieDetailComponent implements OnInit {
   readonly relatedMovies = signal<RecommendationMovie[]>([]);
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
-      this.router.navigate(['/']);
-      return;
-    }
-    this.movieService
-      .getMovieById(id)
-      .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe({
-        next: (movie) => {
-          this.movie.set(movie);
-          this.loadRelated(movie);
-        },
-        error: () => {
-          this.hasError.set(true);
-          this.notifications.error('Movie not found or unavailable.');
-        },
-      });
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+      if (!id) {
+        this.router.navigate(['/']);
+        return;
+      }
+      this.isLoading.set(true);
+      this.hasError.set(false);
+      this.relatedMovies.set([]);
+      this.movieService
+        .getMovieById(id)
+        .pipe(finalize(() => this.isLoading.set(false)))
+        .subscribe({
+          next: (movie) => {
+            this.movie.set(movie);
+            this.loadRelated(movie);
+          },
+          error: () => {
+            this.hasError.set(true);
+            this.notifications.error('Movie not found or unavailable.');
+          },
+        });
+    });
   }
 
   private loadRelated(movie: Movie): void {
