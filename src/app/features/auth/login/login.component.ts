@@ -1,7 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { finalize } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -12,8 +15,12 @@ import { RouterLink } from '@angular/router';
 })
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly showPassword = signal(false);
+  readonly isLoading = signal(false);
+  readonly serverError = signal<string | null>(null);
 
   readonly loginForm = this.fb.group({
     username: ['', [Validators.required]],
@@ -41,6 +48,35 @@ export class LoginComponent {
       this.loginForm.markAllAsTouched();
       return;
     }
-    // TODO: integrate AuthService.login() — checkpoint 3
+
+    this.serverError.set(null);
+    this.isLoading.set(true);
+
+    const { username, password } = this.loginForm.getRawValue();
+
+    this.authService
+      .login({ username: username!, password: password! })
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (response) => {
+          if ('accessToken' in response) {
+            this.router.navigate(['/']);
+          } else {
+            this.authService.setMfaToken(response.mfaToken);
+            this.router.navigate(['/2fa']);
+          }
+        },
+        error: (err: HttpErrorResponse) => {
+          this.serverError.set(this.parseError(err));
+        },
+      });
+  }
+
+  private parseError(err: HttpErrorResponse): string {
+    if (err.status === 401) return 'Invalid username or password.';
+    if (err.status === 403) return 'Your account has been locked.';
+    if (err.status === 429) return 'Too many attempts. Please try again later.';
+    if (err.status >= 500) return 'Something went wrong. Please try again.';
+    return err.error?.message ?? 'An unexpected error occurred.';
   }
 }
