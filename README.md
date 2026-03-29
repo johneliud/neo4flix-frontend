@@ -2,6 +2,29 @@
 
 Angular 21 frontend for the Neo4flix movie recommendation platform. Communicates with a Spring Boot microservices backend through an API gateway.
 
+![Neo4flix Screenshot](public/Screenshot1.png)
+
+## Key Features
+
+- **Movie Discovery**: Paginated grid of movies with high-quality posters and metadata.
+- **Advanced Search**: Filter movies by title, genre, and release year range with real-time URL synchronization.
+- **Interactive Ratings**: 5-star rating system with instant feedback (create, update, or delete your ratings).
+- **Secure Authentication**: JWT-based auth with Login and Registration (rendered as modal overlays).
+- **Two-Factor Authentication (2FA)**: Support for TOTP (Google Authenticator, etc.) for enhanced account security.
+- **Optimized Images**: LQIP (Low Quality Image Placeholder) blur-up effect for smooth poster loading.
+- **Dark/Light Mode**: Full theme support with a dedicated toggle.
+- **Responsive Design**: Mobile-first UI built with Tailwind CSS v4.
+- **Server-Side Rendering (SSR)**: Improved SEO and initial load performance using Angular SSR.
+
+## Tech Stack
+
+- **Framework**: [Angular 21](https://angular.dev/) (Standalone Components, Signals)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **State Management**: [Angular Signals](https://angular.dev/guide/signals) for reactive, fine-grained state.
+- **Rendering**: Angular SSR + Express 5.
+- **API Communication**: `HttpClient` with functional interceptors for base URL prepending and JWT injection.
+- **2FA**: `qrcode` for generating TOTP setup codes.
+
 ## Prerequisites
 
 - Node.js 20+
@@ -24,6 +47,13 @@ ng serve
 ```
 
 Opens at `http://localhost:4200`. The app proxies all `/api/*` requests to the API gateway at `http://localhost:8081`.
+
+## Project Structure
+
+- `src/app/core`: Singleton services, guards, and interceptors.
+- `src/app/features`: Domain-specific feature modules (auth, movies, search, settings).
+- `src/app/shared`: Reusable UI components (rating, lazy-image, pagination, etc.).
+- `src/app/layouts`: Shell layouts (MainLayout with header).
 
 ## Build
 
