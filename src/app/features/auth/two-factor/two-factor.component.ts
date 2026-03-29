@@ -121,7 +121,10 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       .verifyMfa({ mfaToken, totpCode })
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: () => this.router.navigate(['/']),
+        next: () => {
+          this.notifications.success('Welcome back!');
+          this.router.navigate(['/']);
+        },
         error: (err: HttpErrorResponse) => {
           this.notifications.error(this.parseError(err));
         },
