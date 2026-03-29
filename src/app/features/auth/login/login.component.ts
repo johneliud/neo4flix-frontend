@@ -64,6 +64,7 @@ export class LoginComponent {
       .subscribe({
         next: (response) => {
           if ('accessToken' in response) {
+            this.notifications.success('Welcome back!');
             this.router.navigate(['/']);
           } else {
             this.authService.setMfaToken(response.mfaToken);
