@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize, Subject, takeUntil } from 'rxjs';
-import { MovieService } from '../../core/services/movie.service';
+import { Movie, MovieService } from '../../core/services/movie.service';
 import { RecommendationMovie, RecommendationService } from '../../core/services/recommendation.service';
 import { MovieCardComponent } from '../../shared/components/movie-card/movie-card.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
@@ -9,7 +10,7 @@ import { PaginationComponent } from '../../shared/components/pagination/paginati
 @Component({
   selector: 'app-recommendations',
   standalone: true,
-  imports: [FormsModule, MovieCardComponent, PaginationComponent],
+  imports: [FormsModule, NgClass, MovieCardComponent, PaginationComponent],
   templateUrl: './recommendations.component.html',
 })
 export class RecommendationsComponent implements OnInit, OnDestroy {
@@ -28,10 +29,23 @@ export class RecommendationsComponent implements OnInit, OnDestroy {
   readonly isLoading = signal(false);
   readonly hasLoaded = signal(false);
 
+  // Onboarding state (shown when the user has no recommendations yet)
+  readonly starterMovies = signal<Movie[]>([]);
+  readonly isLoadingStarter = signal(false);
+  readonly onboardingGenre = signal('');
+
+  readonly filteredStarterMovies = computed(() => {
+    const g = this.onboardingGenre();
+    return g
+      ? this.starterMovies().filter((m) => m.genres.includes(g))
+      : this.starterMovies();
+  });
+
   readonly minYear = 1990;
   readonly maxYear = new Date().getFullYear() + 10;
   readonly pageSize = 20;
   readonly skeletons = Array.from({ length: 20 });
+  readonly starterSkeletons = Array.from({ length: 20 });
 
   readonly pageRangeLabel = computed(() => {
     const start = this.currentPage() * this.pageSize + 1;
@@ -42,6 +56,7 @@ export class RecommendationsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.movieService.getGenres().pipe(takeUntil(this.destroy$)).subscribe((g) => this.genres.set(g));
     this.load(0);
+    this.loadStarterMovies();
   }
 
   ngOnDestroy(): void {
@@ -85,6 +100,16 @@ export class RecommendationsComponent implements OnInit, OnDestroy {
           this.movies.set([]);
           this.hasLoaded.set(true);
         },
+      });
+  }
+
+  private loadStarterMovies(): void {
+    this.isLoadingStarter.set(true);
+    this.movieService
+      .getMovies(0, 20, 'averageRating', 'desc')
+      .pipe(finalize(() => this.isLoadingStarter.set(false)), takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => this.starterMovies.set(response.content),
       });
   }
 }

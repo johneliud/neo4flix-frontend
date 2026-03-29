@@ -1,6 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { forkJoin, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { catchError, forkJoin, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { Movie, MovieService } from '../../core/services/movie.service';
 import { MovieCardComponent } from '../../shared/components/movie-card/movie-card.component';
 import { WatchlistService } from '../../core/services/watchlist.service';
@@ -31,7 +31,11 @@ export class WatchlistComponent implements OnInit {
       .pipe(
         switchMap((items) => {
           if (items.length === 0) return of([]);
-          return forkJoin(items.map((item) => this.movieService.getMovieById(item.movieId)));
+          return forkJoin(
+            items.map((item) =>
+              this.movieService.getMovieById(item.movieId).pipe(catchError(() => of(null))),
+            ),
+          ).pipe(map((results) => results.filter((m): m is Movie => m !== null)));
         }),
       )
       .subscribe({
