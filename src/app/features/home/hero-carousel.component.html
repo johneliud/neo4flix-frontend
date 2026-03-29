@@ -1,0 +1,60 @@
+@if (isLoading()) {
+  <div class="h-[420px] animate-pulse overflow-hidden rounded-2xl bg-gray-200 dark:bg-white/[0.06] sm:h-[480px]"></div>
+} @else if (movies().length > 0) {
+  <div
+    class="relative"
+    (mouseenter)="pauseTimer()"
+    (mouseleave)="resumeTimer()"
+  >
+    <!-- Slide container -->
+    <div class="h-[420px] sm:h-[480px]">
+      @for (movie of movies(); track movie.id; let i = $index) {
+        @if (i === currentIndex()) {
+          <div class="hero-slide h-full">
+            <app-hero-card [movie]="movie" />
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Prev button -->
+    <button
+      type="button"
+      (click)="prev()"
+      aria-label="Previous slide"
+      class="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white backdrop-blur-sm transition-colors duration-150 hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+
+    <!-- Next button -->
+    <button
+      type="button"
+      (click)="next()"
+      aria-label="Next slide"
+      class="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white backdrop-blur-sm transition-colors duration-150 hover:bg-black/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+
+    <!-- Dot indicators -->
+    <div class="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 gap-2" role="tablist" aria-label="Carousel slides">
+      @for (movie of movies(); track movie.id; let i = $index) {
+        <button
+          type="button"
+          role="tab"
+          (click)="goTo(i)"
+          [attr.aria-label]="'Slide ' + (i + 1)"
+          [attr.aria-selected]="i === currentIndex()"
+          class="h-1.5 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+          [class]="i === currentIndex() ? 'w-7 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/70'"
+        ></button>
+      }
+    </div>
+
+  </div>
+}
