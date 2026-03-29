@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, map, Observable, of, tap } from 'rxjs';
+import { NotificationService } from './notification.service';
 
 export interface LoginRequest {
   username: string;
@@ -39,6 +40,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly notifications = inject(NotificationService);
 
   private readonly _token = signal<string | null>(null);
   private readonly _mfaToken = signal<string | null>(null);
@@ -126,6 +128,7 @@ export class AuthService {
       .pipe(catchError(() => of(null)))
       .subscribe(() => {
         this._token.set(null);
+        this.notifications.success('You have been signed out.');
         this.router.navigate(['/login']);
       });
   }
