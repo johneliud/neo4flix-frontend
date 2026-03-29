@@ -84,14 +84,8 @@
 
   <!-- Results -->
   @if (!isLoading() && hasLoaded()) {
-    @if (movies().length === 0) {
-      <div class="py-24 text-center">
-        <p class="text-lg font-medium text-gray-500 dark:text-gray-400">No recommendations yet.</p>
-        <p class="mt-1 text-sm text-gray-400 dark:text-gray-500">
-          Rate some movies and we'll suggest what to watch next.
-        </p>
-      </div>
-    } @else {
+
+    @if (movies().length > 0) {
       <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         @for (movie of movies(); track movie.id) {
           <app-movie-card [movie]="$any(movie)" />
@@ -108,6 +102,84 @@
         </div>
       }
     }
+
+    @if (movies().length === 0) {
+
+      <!-- Onboarding: no ratings yet -->
+      <div>
+
+        <!-- Heading -->
+        <div class="mb-8 text-center">
+          <p class="text-2xl font-semibold text-gray-900 dark:text-white">
+            Tell us what you like
+          </p>
+          <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            Rate a few movies below and we'll personalise your recommendations from there.
+          </p>
+        </div>
+
+        <!-- Genre chips -->
+        @if (genres().length > 0) {
+          <div class="mb-8 flex flex-wrap justify-center gap-2">
+            <button
+              type="button"
+              (click)="onboardingGenre.set('')"
+              [ngClass]="onboardingGenre() === ''
+                ? 'border-[var(--french-violet)] bg-[var(--french-violet)] text-white'
+                : 'border-gray-200 text-gray-600 hover:border-[var(--french-violet)] hover:text-[var(--french-violet)] dark:border-white/10 dark:text-gray-400 dark:hover:border-[var(--french-violet)] dark:hover:text-[var(--french-violet)]'"
+              class="rounded-full border px-4 py-1.5 text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+            >
+              All
+            </button>
+            @for (g of genres(); track g) {
+              <button
+                type="button"
+                (click)="onboardingGenre.set(g)"
+                [ngClass]="onboardingGenre() === g
+                  ? 'border-[var(--french-violet)] bg-[var(--french-violet)] text-white'
+                  : 'border-gray-200 text-gray-600 hover:border-[var(--french-violet)] hover:text-[var(--french-violet)] dark:border-white/10 dark:text-gray-400 dark:hover:border-[var(--french-violet)] dark:hover:text-[var(--french-violet)]'"
+                class="rounded-full border px-4 py-1.5 text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--french-violet)]"
+              >
+                {{ g }}
+              </button>
+            }
+          </div>
+        }
+
+        <!-- Starter movies skeleton -->
+        @if (isLoadingStarter()) {
+          <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            @for (item of starterSkeletons; track $index) {
+              <div class="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-white/[0.07] dark:bg-white/[0.04]">
+                <div class="aspect-[2/3] w-full animate-pulse bg-gray-200 dark:bg-white/[0.08]"></div>
+                <div class="flex flex-col gap-2 p-3">
+                  <div class="h-3.5 w-3/4 animate-pulse rounded bg-gray-200 dark:bg-white/[0.08]"></div>
+                  <div class="h-3 w-1/2 animate-pulse rounded bg-gray-200 dark:bg-white/[0.08]"></div>
+                  <div class="mt-1 h-5 w-full animate-pulse rounded bg-gray-200 dark:bg-white/[0.08]"></div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Starter movies grid -->
+        @if (!isLoadingStarter()) {
+          @if (filteredStarterMovies().length > 0) {
+            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              @for (movie of filteredStarterMovies(); track movie.id) {
+                <app-movie-card [movie]="movie" />
+              }
+            </div>
+          } @else {
+            <p class="py-12 text-center text-sm text-gray-400 dark:text-gray-500">
+              No movies found for this genre yet.
+            </p>
+          }
+        }
+
+      </div>
+    }
+
   }
 
 </div>
