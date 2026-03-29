@@ -4,11 +4,12 @@ import { Movie, MovieService } from '../../core/services/movie.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { MovieCardComponent } from '../../shared/components/movie-card/movie-card.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { HeroCarouselComponent } from './hero-carousel.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [MovieCardComponent, PaginationComponent],
+  imports: [MovieCardComponent, PaginationComponent, HeroCarouselComponent],
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {
