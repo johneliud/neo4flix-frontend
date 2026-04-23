@@ -3,6 +3,9 @@ import { isPlatformBrowser } from '@angular/common';
 import { Movie, MovieService } from '../../core/services/movie.service';
 import { HeroCardComponent } from '../../shared/components/hero-card/hero-card.component';
 
+const HERO_POOL_SIZE = 40;
+const HERO_SLIDE_COUNT = 8;
+
 @Component({
   selector: 'app-hero-carousel',
   standalone: true,
@@ -22,9 +25,10 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
   private readonly INTERVAL = 5000;
 
   ngOnInit(): void {
-    this.movieService.getMovies(0, 8, 'averageRating', 'desc').subscribe({
+    this.movieService.getMovies(0, HERO_POOL_SIZE, 'averageRating', 'desc').subscribe({
       next: (response) => {
-        this.movies.set(response.content.filter((m) => m.posterUrl));
+        const pool = response.content.filter((m) => m.posterUrl);
+        this.movies.set(this.dailySlice(pool));
         this.isLoading.set(false);
         this.startTimer();
       },
@@ -58,6 +62,23 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
 
   resumeTimer(): void {
     this.startTimer();
+  }
+
+  /**
+   * Picks HERO_SLIDE_COUNT movies from the pool using the day-of-year as an
+   * offset, so the featured selection rotates daily without any API change.
+   */
+  private dailySlice(pool: Movie[]): Movie[] {
+    if (pool.length <= HERO_SLIDE_COUNT) return pool;
+    const maxStart = pool.length - HERO_SLIDE_COUNT;
+    const start = this.dayOfYear() % (maxStart + 1);
+    return pool.slice(start, start + HERO_SLIDE_COUNT);
+  }
+
+  private dayOfYear(): number {
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 0);
+    return Math.floor((now.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000));
   }
 
   private startTimer(): void {
