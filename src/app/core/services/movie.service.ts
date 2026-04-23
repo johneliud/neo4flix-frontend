@@ -21,14 +21,22 @@ export interface PagedResponse<T> {
   totalPages: number;
 }
 
+interface CacheEntry<T> {
+  data: T;
+  cachedAt: number;
+}
+
+const DAY_MS  = 24 * 60 * 60 * 1000;
+const WEEK_MS =  7 * DAY_MS;
+
 @Injectable({ providedIn: 'root' })
 export class MovieService {
   private readonly http = inject(HttpClient);
 
-  private readonly pageCache = new Map<string, PagedResponse<Movie>>();
-  private readonly detailCache = new Map<string, Movie>();
-  private readonly searchCache = new Map<string, PagedResponse<Movie>>();
-  private genresCache: string[] | null = null;
+  private readonly pageCache   = new Map<string, CacheEntry<PagedResponse<Movie>>>();
+  private readonly detailCache = new Map<string, CacheEntry<Movie>>();
+  private readonly searchCache = new Map<string, CacheEntry<PagedResponse<Movie>>>();
+  private genresCacheEntry: CacheEntry<string[]> | null = null;
 
   getMovies(
     page = 0,
@@ -37,8 +45,8 @@ export class MovieService {
     direction = 'asc',
   ): Observable<PagedResponse<Movie>> {
     const key = `${page}-${size}-${sort}-${direction}`;
-    const cached = this.pageCache.get(key);
-    if (cached) return of(cached);
+    const entry = this.pageCache.get(key);
+    if (entry && Date.now() - entry.cachedAt < WEEK_MS) return of(entry.data);
 
     const params = new HttpParams()
       .set('page', page)
@@ -47,16 +55,16 @@ export class MovieService {
       .set('direction', direction);
     return this.http
       .get<PagedResponse<Movie>>('/api/movies', { params })
-      .pipe(tap((response) => this.pageCache.set(key, response)));
+      .pipe(tap((data) => this.pageCache.set(key, { data, cachedAt: Date.now() })));
   }
 
   getMovieById(id: string): Observable<Movie> {
-    const cached = this.detailCache.get(id);
-    if (cached) return of(cached);
+    const entry = this.detailCache.get(id);
+    if (entry && Date.now() - entry.cachedAt < WEEK_MS) return of(entry.data);
 
     return this.http
       .get<Movie>(`/api/movies/${id}`)
-      .pipe(tap((movie) => this.detailCache.set(id, movie)));
+      .pipe(tap((data) => this.detailCache.set(id, { data, cachedAt: Date.now() })));
   }
 
   searchMovies(
@@ -74,18 +82,20 @@ export class MovieService {
     if (yearTo != null) params = params.set('releaseYearTo', yearTo);
 
     const key = params.toString();
-    const cached = this.searchCache.get(key);
-    if (cached) return of(cached);
+    const entry = this.searchCache.get(key);
+    if (entry && Date.now() - entry.cachedAt < WEEK_MS) return of(entry.data);
 
     return this.http
       .get<PagedResponse<Movie>>('/api/movies/search', { params })
-      .pipe(tap((response) => this.searchCache.set(key, response)));
+      .pipe(tap((data) => this.searchCache.set(key, { data, cachedAt: Date.now() })));
   }
 
   getGenres(): Observable<string[]> {
-    if (this.genresCache) return of(this.genresCache);
+    if (this.genresCacheEntry && Date.now() - this.genresCacheEntry.cachedAt < WEEK_MS) {
+      return of(this.genresCacheEntry.data);
+    }
     return this.http
       .get<string[]>('/api/movies/genres')
-      .pipe(tap((genres) => (this.genresCache = genres)));
+      .pipe(tap((data) => (this.genresCacheEntry = { data, cachedAt: Date.now() })));
   }
 }
